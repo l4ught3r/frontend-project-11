@@ -1,8 +1,19 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
+import i18n from 'i18next';
 import render from './render';
+import ru from './locales/ru';
 
 export default () => {
+  const i18nInstance = i18n.createInstance();
+  i18nInstance.init({
+    lng: 'ru',
+    debug: false,
+    resources: {
+      ru,
+    },
+  });
+
   const state = {
     fields: {
       url: '',
