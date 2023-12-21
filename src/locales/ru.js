@@ -1,5 +1,16 @@
 export default {
   translation: {
-    key: 'value',
+    allorigins: 'https://allorigins.hexlet.app/get?disableCache=true&url=',
+    posts: 'Посты',
+    feeds: 'Фиды',
+    buttons: 'Просмотр',
+    rssUploadedSuccessfully: 'RSS успешно загружен',
+    validationErrors: {
+      invalidUrl: 'Ссылка должна быть валидным URL',
+      addedRss: 'RSS уже существует',
+    },
+    errorNames: {
+      validation: 'ValidationError',
+    },
   },
 };
