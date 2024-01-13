@@ -4,7 +4,8 @@ import i18n from 'i18next';
 import axios from 'axios';
 import render from './render';
 import ru from './locales/ru';
-import parser from './parses';
+import parser from './parser';
+import tracking from './tracking';
 
 export default () => {
   const i18nInstance = i18n.createInstance();
@@ -22,10 +23,11 @@ export default () => {
     },
     feeds: [],
     posts: [],
-    activeFeed: '',
+    newFeedId: '',
     error: '',
     urlUsedPreviosly: [],
     fieldValidaty: '',
+    trackingPosts: [],
   };
 
   const form = document.querySelector('form.rss-form');
@@ -56,13 +58,13 @@ export default () => {
         const modifiedUrl = `${i18nInstance.t('allorigins')}${encodeURIComponent(url)}`;
         return axios.get(modifiedUrl);
       })
-      .then((response) => parser(watchedState, response.data))
-      .then(() => {
-        watchedState.fieldValidaty = 'valid';
+      .then((response) => parser(watchedState, response.data, 'new'))
+      .then((id) => {
+        watchedState.newFeedId = id;
         watchedState.urlUsedPreviosly.push(url);
+        tracking(watchedState, url, i18nInstance, id);
       })
       .catch((err) => {
-        watchedState.fieldValidaty = 'invalid';
         watchedState.error = err;
         console.log(err);
       });

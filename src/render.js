@@ -18,6 +18,28 @@ const renderGeneralStructure = (type, i18nInstance) => {
   return ul;
 };
 
+const renderPosts = (posts, list, direction) => {
+  posts.forEach((post) => {
+    const listEl = document.createElement('li');
+    listEl.classList.add('list-group-item', 'd-flex', 'justify-content-between');
+    listEl.classList.add('align-items-start', 'border-0', 'border-end-0');
+    if (direction === 'append') {
+      list.append(listEl);
+    } else if (direction === 'prepend') {
+      list.prepend(listEl);
+    }
+
+    const link = document.createElement('a');
+    link.setAttribute('href', post.link);
+    link.classList.add('fw-bold');
+    link.dataset.id = post.id;
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
+    link.textContent = post.title;
+    listEl.append(link);
+  });
+};
+
 const valid = (form, i18n) => {
   const input = form.elements.url;
   input.classList.remove('is-invalid');
@@ -40,7 +62,7 @@ const invalid = (errorName, form, i18n) => {
   feedbackContainer.textContent = i18n.t(errorName);
 };
 
-export default (state, form, i18n) => (path, value) => {
+export default (state, form, i18n) => (path, value, previousValue) => {
   if (path === 'error') {
     const input = form.elements.url;
     input.classList.add('is-invalid');
@@ -74,23 +96,21 @@ export default (state, form, i18n) => (path, value) => {
       valid(form, i18n);
     });
   }
-  if (path === 'activeFeed') {
+  if (path === 'newFeedId' && !previousValue) {
     const list = renderGeneralStructure('posts', i18n);
 
-    const posts = state.posts.filter(({ feedId }) => feedId === value);
-    posts.forEach((post) => {
-      const feedElement = document.createElement('li');
-      feedElement.classList.add('list-group-item', 'border-0', 'border-end-0');
-      list.append(feedElement);
-
-      const link = document.createElement('a');
-      link.setAttribute('href', post.link);
-      link.classList.add('fw-bold');
-      link.dataset.id = post.id;
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
-      link.textContent = post.title;
-      feedElement.append(link);
-    });
+    const { posts } = state;
+    renderPosts(posts, list, 'append');
+  }
+  if (path === 'newFeedId' && previousValue) {
+    const list = document.querySelector('.posts ul');
+    const posts = state.posts.filter(({ feedId }) => value === feedId).reverse();
+    renderPosts(posts, list, 'prepend');
+  }
+  if (path === 'trackingPosts') {
+    const list = document.querySelector('.posts ul');
+    const existingPosts = state.posts.map(({ id }) => id);
+    const posts = state.trackingPosts.filter(({ id }) => !existingPosts.includes(id)).reverse();
+    renderPosts(posts, list, 'prepend');
   }
 };
