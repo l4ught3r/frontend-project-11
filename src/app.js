@@ -25,6 +25,7 @@ export default () => {
     posts: [],
     newFeedId: '',
     error: '',
+    parsingErrors: [],
     urlUsedPreviosly: [],
     trackingPosts: [],
     viewedPost: '',

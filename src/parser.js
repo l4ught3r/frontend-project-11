@@ -1,7 +1,7 @@
 import uniqueId from 'lodash/uniqueId';
 
 export default (state, data, type, currentFeedId) => {
-  if (data.contents) {
+  try {
     const parser = new DOMParser();
     const document = parser.parseFromString(data.contents, 'text/xml');
     const items = document.querySelectorAll('item');
@@ -61,6 +61,8 @@ export default (state, data, type, currentFeedId) => {
       });
     }
     return newPostsId;
+  } catch (err) {
+    state.parsingErrors.push(err);
+    throw new Error();
   }
-  throw new Error(data.status.error.name);
 };

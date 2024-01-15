@@ -97,6 +97,9 @@ export default (state, form, i18n) => (path, value, previousValue) => {
       }
     }
   }
+  if (path === 'parsingErrors') {
+    invalid('validationErrors.invalidRss', form, i18n);
+  }
   if (path === 'feeds') {
     const list = renderGeneralStructure('feeds', i18n);
 
