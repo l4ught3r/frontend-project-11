@@ -95,6 +95,8 @@ export default (state, form, i18n) => (path, value, previousValue) => {
       if (value.errors.toString() === 'errors.addedRss') {
         invalid('validationErrors.addedRss', form, i18n);
       }
+    } else if (value.name === i18n.t('errorNames.axios')) {
+      invalid('validationErrors.networkError', form, i18n);
     }
   }
   if (path === 'parsingErrors') {

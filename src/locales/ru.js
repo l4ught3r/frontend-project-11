@@ -9,9 +9,11 @@ export default {
       invalidUrl: 'Ссылка должна быть валидным URL',
       addedRss: 'RSS уже существует',
       invalidRss: 'Ресурс не содержит валидный RSS',
+      networkError: 'Ошибка сети',
     },
     errorNames: {
       validation: 'ValidationError',
+      axios: 'AxiosError',
     },
   },
 };
