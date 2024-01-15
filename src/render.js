@@ -1,4 +1,7 @@
-const renderGeneralStructure = (type, i18nInstance) => {
+import onChange from 'on-change';
+import render from './renderLinks';
+
+const renderGeneralStructure = (type, i18n) => {
   const container = document.querySelector(`.${type}`);
   container.innerHTML = '';
   const div = document.createElement('div');
@@ -9,7 +12,7 @@ const renderGeneralStructure = (type, i18nInstance) => {
   ul.classList.add('list-group', 'border-0', 'rounded-0');
   const h2 = document.createElement('h2');
   h2.classList.add('card-title', 'h4');
-  h2.textContent = i18nInstance.t(type);
+  h2.textContent = i18n.t(type);
   container.prepend(div);
   div.prepend(div2);
   div.append(ul);
@@ -18,7 +21,7 @@ const renderGeneralStructure = (type, i18nInstance) => {
   return ul;
 };
 
-const renderPosts = (posts, list, direction) => {
+const renderPosts = (posts, list, direction, i18n, state) => {
   posts.forEach((post) => {
     const listEl = document.createElement('li');
     listEl.classList.add('list-group-item', 'd-flex', 'justify-content-between');
@@ -37,6 +40,25 @@ const renderPosts = (posts, list, direction) => {
     link.setAttribute('rel', 'noopener noreferrer');
     link.textContent = post.title;
     listEl.append(link);
+
+    const watchedState = onChange(state, render(post));
+
+    link.addEventListener('click', () => {
+      watchedState.viewedPost = post.id;
+    });
+
+    const button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+    button.dataset.id = post.id;
+    button.dataset.bsToggle = 'modal';
+    button.dataset.bsTarget = '#modal';
+    button.textContent = i18n.t('buttons');
+    listEl.append(button);
+
+    button.addEventListener('click', () => {
+      watchedState.viewedPost = post.id;
+    });
   });
 };
 
@@ -100,17 +122,17 @@ export default (state, form, i18n) => (path, value, previousValue) => {
     const list = renderGeneralStructure('posts', i18n);
 
     const { posts } = state;
-    renderPosts(posts, list, 'append');
+    renderPosts(posts, list, 'append', i18n, state);
   }
   if (path === 'newFeedId' && previousValue) {
     const list = document.querySelector('.posts ul');
     const posts = state.posts.filter(({ feedId }) => value === feedId).reverse();
-    renderPosts(posts, list, 'prepend');
+    renderPosts(posts, list, 'prepend', i18n, state);
   }
   if (path === 'trackingPosts') {
     const list = document.querySelector('.posts ul');
     const existingPosts = state.posts.map(({ id }) => id);
     const posts = state.trackingPosts.filter(({ id }) => !existingPosts.includes(id)).reverse();
-    renderPosts(posts, list, 'prepend');
+    renderPosts(posts, list, 'prepend', i18n, state);
   }
 };

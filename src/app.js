@@ -26,8 +26,8 @@ export default () => {
     newFeedId: '',
     error: '',
     urlUsedPreviosly: [],
-    fieldValidaty: '',
     trackingPosts: [],
+    viewedPost: '',
   };
 
   const form = document.querySelector('form.rss-form');

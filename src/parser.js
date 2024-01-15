@@ -1,6 +1,6 @@
 import uniqueId from 'lodash/uniqueId';
 
-export default (state, data, type, curFeedId) => {
+export default (state, data, type, currentFeedId) => {
   if (data.contents) {
     const parser = new DOMParser();
     const document = parser.parseFromString(data.contents, 'text/xml');
@@ -32,7 +32,7 @@ export default (state, data, type, curFeedId) => {
       return id;
     }
     if (type === 'existing') {
-      const existingPosts = state.posts.filter(({ feedId }) => feedId === curFeedId);
+      const existingPosts = state.posts.filter(({ feedId }) => feedId === currentFeedId);
       const existingPostsTitles = existingPosts.map(({ title }) => title);
       const newPosts = Array.from(items).filter((item) => {
         const title = item.querySelector('title').textContent;
@@ -45,14 +45,14 @@ export default (state, data, type, curFeedId) => {
         const postId = uniqueId();
         newPostsId.push(postId);
         state.trackingPosts.push({
-          feedId: curFeedId,
+          feedId: currentFeedId,
           id: postId,
           title,
           description,
           link,
         });
         state.posts.push({
-          feedId: curFeedId,
+          feedId: currentFeedId,
           id: postId,
           title,
           description,
