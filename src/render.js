@@ -2,8 +2,8 @@ import onChange from 'on-change';
 import render from './renderLinks';
 
 const renderGeneralStructure = (type, i18n) => {
-  const container = document.querySelector(`.${type}`);
-  container.innerHTML = '';
+  const view = document.querySelector(`.${type}`);
+  view.innerHTML = '';
   const div = document.createElement('div');
   div.classList.add('card', 'border-0');
   const div2 = document.createElement('div');
@@ -13,7 +13,7 @@ const renderGeneralStructure = (type, i18n) => {
   const h2 = document.createElement('h2');
   h2.classList.add('card-title', 'h4');
   h2.textContent = i18n.t(type);
-  container.prepend(div);
+  view.prepend(div);
   div.prepend(div2);
   div.append(ul);
   div2.prepend(h2);
@@ -21,15 +21,15 @@ const renderGeneralStructure = (type, i18n) => {
   return ul;
 };
 
-const renderPosts = (posts, container, direction, i18n, state) => {
+const renderPosts = (posts, view, direction, i18n, state) => {
   posts.forEach((post) => {
     const listEl = document.createElement('li');
     listEl.classList.add('list-group-item', 'd-flex', 'justify-content-between');
     listEl.classList.add('align-items-start', 'border-0', 'border-end-0');
     if (direction === 'append') {
-      container.append(listEl);
+      view.append(listEl);
     } else if (direction === 'prepend') {
-      container.prepend(listEl);
+      view.prepend(listEl);
     }
 
     const link = document.createElement('a');
@@ -103,12 +103,12 @@ export default (state, form, i18n) => (path, value, previousValue) => {
     invalid('validationErrors.invalidRss', form, i18n);
   }
   if (path === 'feeds') {
-    const container = renderGeneralStructure('feeds', i18n);
+    const view = renderGeneralStructure('feeds', i18n);
 
     state.feeds.forEach((feed) => {
       const feedElement = document.createElement('li');
       feedElement.classList.add('list-group-item', 'border-0', 'border-end-0');
-      container.prepend(feedElement);
+      view.prepend(feedElement);
 
       const title = document.createElement('h3');
       title.classList.add('h6', 'm-0');
@@ -124,20 +124,20 @@ export default (state, form, i18n) => (path, value, previousValue) => {
     });
   }
   if (path === 'newFeedId' && !previousValue) {
-    const container = renderGeneralStructure('posts', i18n);
+    const view = renderGeneralStructure('posts', i18n);
 
     const { posts } = state;
-    renderPosts(posts, container, 'append', i18n, state);
+    renderPosts(posts, view, 'append', i18n, state);
   }
   if (path === 'newFeedId' && previousValue) {
-    const container = document.querySelector('.posts ul');
+    const view = document.querySelector('.posts ul');
     const posts = state.posts.filter(({ feedId }) => value === feedId).reverse();
-    renderPosts(posts, container, 'prepend', i18n, state);
+    renderPosts(posts, view, 'prepend', i18n, state);
   }
   if (path === 'trackingPosts') {
-    const container = document.querySelector('.posts ul');
+    const view = document.querySelector('.posts ul');
     const existingPosts = state.posts.map(({ id }) => id);
     const posts = state.trackingPosts.filter(({ id }) => !existingPosts.includes(id)).reverse();
-    renderPosts(posts, container, 'prepend', i18n, state);
+    renderPosts(posts, view, 'prepend', i18n, state);
   }
 };
