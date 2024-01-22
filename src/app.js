@@ -7,17 +7,21 @@ import ru from './locales/ru';
 import parser from './parser';
 import tracking from './tracking';
 
-export default () => {
-  const i18nInstance = i18n.createInstance();
-  i18nInstance.init({
-    lng: 'ru',
-    debug: false,
-    resources: {
-      ru,
-    },
-  });
+const i18nInstance = i18n.createInstance();
+i18nInstance.init({
+  lng: 'ru',
+  debug: false,
+  resources: {
+    ru,
+  },
+});
 
+export default () => {
   const state = {
+    elements: {
+      form: document.querySelector('form.rss-form'),
+      input: document.querySelector('form.rss-form').elements.url,
+    },
     fields: {
       url: '',
     },
@@ -31,10 +35,9 @@ export default () => {
     viewedPost: '',
   };
 
-  const form = document.querySelector('form.rss-form');
-  const watchedState = onChange(state, render(state, form, i18nInstance));
+  const watchedState = onChange(state, render(state, state.elements.form, i18nInstance));
 
-  form.addEventListener('submit', (e) => {
+  state.elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url');

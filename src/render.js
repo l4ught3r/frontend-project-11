@@ -1,9 +1,24 @@
 import onChange from 'on-change';
-import render from './renderLinks';
+
+const renderLinks = (post) => (path, value) => {
+  if (path === 'viewedPost') {
+    const link = document.querySelector(`a[data-id="${value}"]`);
+    link.classList.remove('fw-bold');
+    link.classList.add('fw-normal');
+    link.classList.add('link-secondary');
+
+    const modalTitle = document.querySelector('.modal-title');
+    modalTitle.textContent = post.title;
+    const modalBody = document.querySelector('.modal-body');
+    modalBody.textContent = post.description;
+    const modalLink = document.querySelector('.modal-footer a');
+    modalLink.setAttribute('href', post.link);
+  }
+};
 
 const renderGeneralStructure = (type, i18n) => {
   const view = document.querySelector(`.${type}`);
-  view.innerHTML = '';
+  view.textContent = '';
   const div = document.createElement('div');
   div.classList.add('card', 'border-0');
   const div2 = document.createElement('div');
@@ -41,7 +56,7 @@ const renderPosts = (posts, view, direction, i18n, state) => {
     link.textContent = post.title;
     listEl.append(link);
 
-    const watchedState = onChange(state, render(post));
+    const watchedState = onChange(state, renderLinks(post));
 
     link.addEventListener('click', () => {
       watchedState.viewedPost = post.id;
@@ -62,22 +77,20 @@ const renderPosts = (posts, view, direction, i18n, state) => {
   });
 };
 
-const valid = (form, i18n) => {
-  const input = form.elements.url;
-  input.classList.remove('is-invalid');
-  input.classList.add('is-valid');
+const valid = (form, i18n, state) => {
+  state.elements.input.classList.remove('is-invalid');
+  state.elements.input.classList.add('is-valid');
   form.reset();
-  input.focus();
+  state.elements.input.focus();
   const feedbackContainer = document.querySelector('.feedback');
   feedbackContainer.classList.remove('text-danger');
   feedbackContainer.classList.add('text-success');
   feedbackContainer.textContent = i18n.t('rssUploadedSuccessfully');
 };
 
-const invalid = (errorName, form, i18n) => {
-  const input = form.elements.url;
-  input.classList.remove('is-valid');
-  input.classList.add('is-invalid');
+const invalid = (errorName, form, i18n, state) => {
+  state.elements.input.classList.remove('is-valid');
+  state.elements.input.classList.add('is-invalid');
   const feedbackContainer = document.querySelector('.feedback');
   feedbackContainer.classList.remove('text-success');
   feedbackContainer.classList.add('text-danger');
@@ -86,21 +99,20 @@ const invalid = (errorName, form, i18n) => {
 
 export default (state, form, i18n) => (path, value, previousValue) => {
   if (path === 'error') {
-    const input = form.elements.url;
-    input.classList.add('is-invalid');
+    state.elements.input.classList.add('is-invalid');
     if (value.name === i18n.t('errorNames.validation')) {
       if (value.errors.toString() === 'errors.invalidUrl') {
-        invalid('validationErrors.invalidUrl', form, i18n);
+        invalid('validationErrors.invalidUrl', form, i18n, state);
       }
       if (value.errors.toString() === 'errors.addedRss') {
-        invalid('validationErrors.addedRss', form, i18n);
+        invalid('validationErrors.addedRss', form, i18n, state);
       }
     } else if (value.name === i18n.t('errorNames.axios')) {
-      invalid('validationErrors.networkError', form, i18n);
+      invalid('validationErrors.networkError', form, i18n, state);
     }
   }
   if (path === 'parsingErrors') {
-    invalid('validationErrors.invalidRss', form, i18n);
+    invalid('validationErrors.invalidRss', form, i18n, state);
   }
   if (path === 'feeds') {
     const view = renderGeneralStructure('feeds', i18n);
@@ -120,7 +132,7 @@ export default (state, form, i18n) => (path, value, previousValue) => {
       description.textContent = feed.description;
       feedElement.append(description);
 
-      valid(form, i18n);
+      valid(form, i18n, state);
     });
   }
   if (path === 'newFeedId' && !previousValue) {
