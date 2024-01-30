@@ -109,7 +109,9 @@ export default (state, form, i18n) => (path, value, previousValue) => {
       }
     } else if (value.name === i18n.t('errorNames.axios')) {
       invalid('validationErrors.networkError', form, i18n, state);
-    }
+    } else if (value.name === i18n.t('errorNames.rss')) {
+      invalid('validationErrors.invalidRss', form, i18n, state);
+    } 
   }
   if (path === 'parsingErrors') {
     invalid('validationErrors.invalidRss', form, i18n, state);

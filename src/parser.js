@@ -1,68 +1,28 @@
-import uniqueId from 'lodash/uniqueId';
-
-export default (state, data, type, currentFeedId) => {
+export default (data) => {
   try {
     const parser = new DOMParser();
     const document = parser.parseFromString(data.contents, 'text/xml');
-    const items = document.querySelectorAll('item');
-    const newPostsId = [];
+    const documentItems = document.querySelectorAll('item');
 
-    if (type === 'new') {
-      const id = uniqueId();
-      const chaTitle = document.querySelector('channel > title').textContent;
-      const chaDescription = document.querySelector('channel > description').textContent;
-      state.feeds.push({
-        id,
-        title: chaTitle,
-        description: chaDescription,
-      });
-      items.forEach((item) => {
-        const title = item.querySelector('title').textContent;
-        const description = item.querySelector('description').textContent;
-        const link = item.querySelector('link').textContent;
-        const postId = uniqueId();
-        state.posts.push({
-          feedId: id,
-          id: postId,
-          title,
-          description,
-          link,
-        });
-      });
-      return id;
-    }
-    if (type === 'existing') {
-      const existingPosts = state.posts.filter(({ feedId }) => feedId === currentFeedId);
-      const existingPostsTitles = existingPosts.map(({ title }) => title);
-      const newPosts = Array.from(items).filter((item) => {
-        const title = item.querySelector('title').textContent;
-        return !existingPostsTitles.includes(title);
-      });
-      newPosts.forEach((post) => {
-        const title = post.querySelector('title').textContent;
-        const description = post.querySelector('description').textContent;
-        const link = post.querySelector('link').textContent;
-        const postId = uniqueId();
-        newPostsId.push(postId);
-        state.trackingPosts.push({
-          feedId: currentFeedId,
-          id: postId,
-          title,
-          description,
-          link,
-        });
-        state.posts.push({
-          feedId: currentFeedId,
-          id: postId,
-          title,
-          description,
-          link,
-        });
-      });
-    }
-    return newPostsId;
+    const title = document.querySelector('channel > title').textContent;
+    const description = document.querySelector('channel > description').textContent;
+    const link = document.querySelector('link').textContent;
+
+    const items = Array.from(documentItems).map((item) => ({
+      title: item.querySelector('title').textContent,
+      description: item.querySelector('description').textContent,
+      link: item.querySelector('link').textContent,
+    }));
+
+    const channel = {
+      title,
+      description,
+      items,
+      documentItems,
+    };
+
+    return channel;
   } catch (err) {
-    state.parsingErrors.push(err);
-    throw new Error();
+    throw new Error('parsingError');
   }
 };

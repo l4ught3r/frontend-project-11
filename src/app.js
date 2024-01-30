@@ -6,6 +6,7 @@ import render from './render';
 import ru from './locales/ru';
 import parser from './parser';
 import tracking from './tracking';
+import func from './func';
 
 const i18nInstance = i18n.createInstance();
 i18nInstance.init({
@@ -62,7 +63,8 @@ export default () => {
         const modifiedUrl = `${i18nInstance.t('allorigins')}${encodeURIComponent(url)}`;
         return axios.get(modifiedUrl);
       })
-      .then((response) => parser(watchedState, response.data, 'new'))
+      .then((response) => parser(response.data))
+      .then((channel) => func(watchedState, channel, 'new'))
       .then((id) => {
         watchedState.newFeedId = id;
         watchedState.urlUsedPreviosly.push(url);
