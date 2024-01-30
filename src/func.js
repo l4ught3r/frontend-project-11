@@ -50,6 +50,6 @@ export default (state, channel, type, currentFeedId) => {
         link,
       });
     });
-    return newPostsId;
   }
+  return newPostsId;
 };
