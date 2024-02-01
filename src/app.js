@@ -20,6 +20,7 @@ i18nInstance.init({
 export default () => {
   const state = {
     elements: {
+      button: document.querySelector('button[type="submit"]'),
       form: document.querySelector('form.rss-form'),
       input: document.querySelector('form.rss-form').elements.url,
     },
@@ -33,11 +34,14 @@ export default () => {
     urlUsedPreviosly: [],
     trackingPosts: [],
     viewedPost: '',
+    state: 'filling',
   };
 
   const watchedState = onChange(state, render(state, state.elements.form, i18nInstance));
 
   state.elements.form.addEventListener('submit', (e) => {
+    watchedState.state = 'processing';
+
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url');
@@ -70,8 +74,10 @@ export default () => {
         tracking(watchedState, url, i18nInstance, id);
       })
       .catch((err) => {
+        watchedState.state = 'failed';
         watchedState.error = err;
         console.log(err);
       });
+    watchedState.state = 'filling';
   });
 };

@@ -98,6 +98,14 @@ const invalid = (errorName, form, i18n, state) => {
 };
 
 export default (state, form, i18n) => (path, value, previousValue) => {
+  if (path === 'state') {
+    if (value === 'processing') {
+      state.elements.button.classList.add('disabled');
+    }
+    if (value === 'filling') {
+      state.elements.button.classList.remove('disabled');
+    }
+  }
   if (path === 'error') {
     state.elements.input.classList.add('is-invalid');
     if (value.name === i18n.t('errorNames.validation')) {
