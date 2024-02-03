@@ -77,7 +77,7 @@ const renderPosts = (posts, view, direction, i18n, state) => {
   });
 };
 
-const valid = (elements, i18n, state) => {
+const valid = (elements, i18n) => {
   elements.input.classList.remove('is-invalid');
   elements.input.classList.add('is-valid');
   elements.form.reset();
@@ -88,7 +88,7 @@ const valid = (elements, i18n, state) => {
   feedbackContainer.textContent = i18n.t('rssUploadedSuccessfully');
 };
 
-const invalid = (errorName, elements, i18n, state) => {
+const invalid = (errorName, elements, i18n) => {
   elements.input.classList.remove('is-valid');
   elements.input.classList.add('is-invalid');
   const feedbackContainer = document.querySelector('.feedback');
