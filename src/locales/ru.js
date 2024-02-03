@@ -14,7 +14,7 @@ export default {
     errorNames: {
       validation: 'ValidationError',
       axios: 'AxiosError',
-      rss: 'Error',
+      rss: 'ReferenceError',
     },
   },
 };

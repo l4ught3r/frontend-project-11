@@ -22,6 +22,7 @@ export default (data) => {
 
     return channel;
   } catch (err) {
-    throw new Error('parsingError');
+    const errorNode = doc.querySelector('parsererror');
+    throw new Error(errorNode);
   }
 };

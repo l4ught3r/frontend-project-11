@@ -118,7 +118,7 @@ export default (state, elements, i18n) => (path, value, previousValue) => {
     } else if (value.name === i18n.t('errorNames.axios')) {
       invalid('validationErrors.networkError', elements, i18n, state);
     } else if (value.name === i18n.t('errorNames.rss')) {
-      if (value.message === 'parsingError') {
+      if (value.message === 'doc is not defined') {
         invalid('validationErrors.invalidRss', elements, i18n, state);
       }
     }
