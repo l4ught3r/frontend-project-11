@@ -6,7 +6,7 @@ import render from './render';
 import ru from './locales/ru';
 import parser from './parser';
 import tracking from './tracking';
-import func from './func';
+import add from './addToState';
 
 const i18nInstance = i18n.createInstance();
 i18nInstance.init({
@@ -19,11 +19,6 @@ i18nInstance.init({
 
 export default () => {
   const state = {
-    elements: {
-      button: document.querySelector('button[type="submit"]'),
-      form: document.querySelector('form.rss-form'),
-      input: document.querySelector('form.rss-form').elements.url,
-    },
     fields: {
       url: '',
     },
@@ -37,9 +32,15 @@ export default () => {
     state: 'filling',
   };
 
-  const watchedState = onChange(state, render(state, state.elements.form, i18nInstance));
+  const elements = {
+    button: document.querySelector('button[type="submit"]'),
+    form: document.querySelector('form.rss-form'),
+    input: document.querySelector('form.rss-form').elements.url,
+  };
 
-  state.elements.form.addEventListener('submit', (e) => {
+  const watchedState = onChange(state, render(state, elements, i18nInstance));
+
+  elements.form.addEventListener('submit', (e) => {
     watchedState.state = 'processing';
 
     e.preventDefault();
@@ -67,14 +68,13 @@ export default () => {
         return axios.get(modifiedUrl);
       })
       .then((response) => parser(response.data))
-      .then((channel) => func(watchedState, channel, 'new'))
+      .then((channel) => add(watchedState, channel, 'new'))
       .then((id) => {
         watchedState.newFeedId = id;
         watchedState.urlUsedPreviosly.push(url);
         tracking(watchedState, url, i18nInstance, id);
       })
       .catch((err) => {
-        watchedState.state = 'failed';
         watchedState.error = err;
         console.log(err);
       });

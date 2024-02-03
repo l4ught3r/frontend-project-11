@@ -77,49 +77,49 @@ const renderPosts = (posts, view, direction, i18n, state) => {
   });
 };
 
-const valid = (form, i18n, state) => {
-  state.elements.input.classList.remove('is-invalid');
-  state.elements.input.classList.add('is-valid');
-  form.reset();
-  state.elements.input.focus();
+const valid = (elements, i18n, state) => {
+  elements.input.classList.remove('is-invalid');
+  elements.input.classList.add('is-valid');
+  elements.form.reset();
+  elements.input.focus();
   const feedbackContainer = document.querySelector('.feedback');
   feedbackContainer.classList.remove('text-danger');
   feedbackContainer.classList.add('text-success');
   feedbackContainer.textContent = i18n.t('rssUploadedSuccessfully');
 };
 
-const invalid = (errorName, form, i18n, state) => {
-  state.elements.input.classList.remove('is-valid');
-  state.elements.input.classList.add('is-invalid');
+const invalid = (errorName, elements, i18n, state) => {
+  elements.input.classList.remove('is-valid');
+  elements.input.classList.add('is-invalid');
   const feedbackContainer = document.querySelector('.feedback');
   feedbackContainer.classList.remove('text-success');
   feedbackContainer.classList.add('text-danger');
   feedbackContainer.textContent = i18n.t(errorName);
 };
 
-export default (state, form, i18n) => (path, value, previousValue) => {
+export default (state, elements, i18n) => (path, value, previousValue) => {
   if (path === 'state') {
     if (value === 'processing') {
-      state.elements.button.classList.add('disabled');
+      elements.button.classList.add('disabled');
     }
     if (value === 'filling') {
-      state.elements.button.classList.remove('disabled');
+      elements.button.classList.remove('disabled');
     }
   }
   if (path === 'error') {
-    state.elements.input.classList.add('is-invalid');
+    elements.input.classList.add('is-invalid');
     if (value.name === i18n.t('errorNames.validation')) {
       if (value.errors.toString() === 'errors.invalidUrl') {
-        invalid('validationErrors.invalidUrl', form, i18n, state);
+        invalid('validationErrors.invalidUrl', elements, i18n, state);
       }
       if (value.errors.toString() === 'errors.addedRss') {
-        invalid('validationErrors.addedRss', form, i18n, state);
+        invalid('validationErrors.addedRss', elements, i18n, state);
       }
     } else if (value.name === i18n.t('errorNames.axios')) {
-      invalid('validationErrors.networkError', form, i18n, state);
+      invalid('validationErrors.networkError', elements, i18n, state);
     } else if (value.name === i18n.t('errorNames.rss')) {
       if (value.message === 'parsingError') {
-        invalid('validationErrors.invalidRss', form, i18n, state);
+        invalid('validationErrors.invalidRss', elements, i18n, state);
       }
     }
   }
@@ -141,7 +141,7 @@ export default (state, form, i18n) => (path, value, previousValue) => {
       description.textContent = feed.description;
       feedElement.append(description);
 
-      valid(form, i18n, state);
+      valid(elements, i18n, state);
     });
   }
   if (path === 'newFeedId' && !previousValue) {

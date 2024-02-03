@@ -1,6 +1,6 @@
 import axios from 'axios';
 import parser from './parser';
-import func from './func';
+import add from './addToState';
 
 export default (state, url, i18n, feedId) => {
   const modifiedUrl = `${i18n.t('allorigins')}${encodeURIComponent(url)}`;
@@ -9,7 +9,7 @@ export default (state, url, i18n, feedId) => {
     axios
       .get(modifiedUrl)
       .then((response) => parser(response.data))
-      .then((channel) => func(state, channel, 'existing', feedId))
+      .then((channel) => add(state, channel, 'existing', feedId))
       .catch((err) => console.log(err))
       .then(() => setTimeout(() => iter(), 5000));
   };
