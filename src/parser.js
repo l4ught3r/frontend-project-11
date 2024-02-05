@@ -22,7 +22,9 @@ export default (data) => {
 
     return channel;
   } catch (err) {
-    const errorNode = doc.querySelector('parsererror');
+    const parser = new DOMParser();
+    const document = parser.parseFromString(data.contents, 'text/xml');
+    const errorNode = document.querySelector('parsererror div').textContent;
     throw new Error(errorNode);
   }
 };
