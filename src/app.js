@@ -27,7 +27,7 @@ export default () => {
     posts: [],
     newFeedId: '',
     error: '',
-    urlUsedPreviosly: [],
+    urlsUsed: [],
     trackingPosts: [],
     viewedPost: '',
     state: 'filling',
@@ -60,7 +60,7 @@ export default () => {
     });
 
     const schema = yup.object().shape({
-      url: yup.string().url().nullable().notOneOf(state.urlUsedPreviosly),
+      url: yup.string().url().nullable().notOneOf(state.urlsUsed),
     });
     schema
       .validate(state.fields)
@@ -72,7 +72,7 @@ export default () => {
       .then((channel) => add(watchedState, channel, 'new'))
       .then((id) => {
         watchedState.newFeedId = id;
-        watchedState.urlUsedPreviosly.push(url);
+        watchedState.urlsUsed.push(url);
         tracking(watchedState, url, i18nInstance, id);
       })
       .catch((err) => {

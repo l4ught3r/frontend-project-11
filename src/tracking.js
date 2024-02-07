@@ -3,7 +3,7 @@ import parser from './parser';
 import add from './addToState';
 import proxy from './proxy';
 
-export default (state, url, i18n, feedId) => {
+export default (state, url, feedId) => {
   const modifiedUrl = proxy(url);
 
   const iter = () => {
