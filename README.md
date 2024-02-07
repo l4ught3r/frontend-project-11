@@ -11,4 +11,4 @@
 ### Channels for example 
 	  https://ru.hexlet.io/lessons.rss 
  	  https://aljazeera.com/xml/rss/all.xml
-    https://thecipherbrief.com/feed
+      https://thecipherbrief.com/feed
