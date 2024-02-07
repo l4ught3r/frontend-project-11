@@ -4,4 +4,4 @@ export default (url, base = 'https://allorigins.hexlet.app/get') => {
   newUrl.searchParams.set('disableCache', 'true');
   newUrl.searchParams.set('url', enteredUrl);
   return newUrl;
-}
+};
