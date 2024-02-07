@@ -1,6 +1,5 @@
 export default {
   translation: {
-    allorigins: 'https://allorigins.hexlet.app/get?disableCache=true&url=',
     posts: 'Посты',
     feeds: 'Фиды',
     buttons: 'Просмотр',

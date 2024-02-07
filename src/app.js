@@ -7,17 +7,18 @@ import ru from './locales/ru';
 import parser from './parser';
 import tracking from './tracking';
 import add from './addToState';
-
-const i18nInstance = i18n.createInstance();
-i18nInstance.init({
-  lng: 'ru',
-  debug: false,
-  resources: {
-    ru,
-  },
-});
+import proxy from './proxy';
 
 export default () => {
+  const i18nInstance = i18n.createInstance();
+  i18nInstance.init({
+    lng: 'ru',
+    debug: false,
+    resources: {
+      ru,
+    },
+  });
+
   const state = {
     fields: {
       url: '',
@@ -64,7 +65,7 @@ export default () => {
     schema
       .validate(state.fields)
       .then(() => {
-        const modifiedUrl = `${i18nInstance.t('allorigins')}${encodeURIComponent(url)}`;
+        const modifiedUrl = proxy(url);
         return axios.get(modifiedUrl);
       })
       .then((response) => parser(response.data))

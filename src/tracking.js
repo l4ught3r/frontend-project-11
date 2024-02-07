@@ -1,9 +1,10 @@
 import axios from 'axios';
 import parser from './parser';
 import add from './addToState';
+import proxy from './proxy';
 
 export default (state, url, i18n, feedId) => {
-  const modifiedUrl = `${i18n.t('allorigins')}${encodeURIComponent(url)}`;
+  const modifiedUrl = proxy(url);
 
   const iter = () => {
     axios
