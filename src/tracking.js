@@ -5,7 +5,6 @@ import proxy from './proxy';
 
 const tracking = (state) => {
   const { feeds, posts } = state;
-  const statee = state;
   feeds.forEach(({ url, id }) => axios
     .get(proxy(url))
     .then((response) => parser(response.data))
@@ -15,7 +14,7 @@ const tracking = (state) => {
       const addedPosts = _.differenceBy(updatedPosts, oldPosts, 'link');
       if (addedPosts.length !== 0) {
         const newPosts = addedPosts.map((post) => ({ ...post, id: _.uniqueId(), feedId: id }));
-        statee.posts = [...newPosts, ...posts];
+        state.posts = [...newPosts, ...posts];
       }
     })
     .catch((err) => console.log(err)));
