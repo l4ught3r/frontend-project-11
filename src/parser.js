@@ -4,19 +4,20 @@ export default (data) => {
     const document = parser.parseFromString(data.contents, 'text/xml');
     const documentItems = document.querySelectorAll('item');
 
-    const title = document.querySelector('channel > title').textContent;
-    const description = document.querySelector('channel > description').textContent;
+    const feed = {
+      title: document.querySelector('channel > title').textContent,
+      description: document.querySelector('channel > description').textContent,
+    };
 
-    const items = Array.from(documentItems).map((item) => ({
+    const posts = Array.from(documentItems).map((item) => ({
       title: item.querySelector('title').textContent,
       description: item.querySelector('description').textContent,
       link: item.querySelector('link').textContent,
     }));
 
     const channel = {
-      title,
-      description,
-      items,
+      feed,
+      posts,
       documentItems,
     };
 

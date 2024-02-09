@@ -36,16 +36,13 @@ const renderGeneralStructure = (type, i18n) => {
   return ul;
 };
 
-const renderPosts = (posts, view, direction, i18n, state) => {
+const renderPosts = (posts, view, i18n, state) => {
   posts.forEach((post) => {
     const listEl = document.createElement('li');
     listEl.classList.add('list-group-item', 'd-flex', 'justify-content-between');
     listEl.classList.add('align-items-start', 'border-0', 'border-end-0');
-    if (direction === 'append') {
-      view.append(listEl);
-    } else if (direction === 'prepend') {
-      view.prepend(listEl);
-    }
+
+    view.append(listEl);
 
     const link = document.createElement('a');
     link.setAttribute('href', post.link);
@@ -76,6 +73,7 @@ const renderPosts = (posts, view, direction, i18n, state) => {
 const valid = (elements, i18n) => {
   elements.input.classList.remove('is-invalid');
   elements.input.classList.add('is-valid');
+  setTimeout(() => elements.input.classList.remove('is-valid'), 1000);
   elements.form.reset();
   elements.input.focus();
   const feedbackContainer = document.querySelector('.feedback');
@@ -93,7 +91,7 @@ const invalid = (errorName, elements, i18n) => {
   feedbackContainer.textContent = i18n.t(errorName);
 };
 
-export default (state, elements, i18n) => (path, value, previousValue) => {
+export default (state, elements, i18n) => (path, value) => {
   switch (path) {
     case 'state':
       if (value === 'processing') {
@@ -106,7 +104,6 @@ export default (state, elements, i18n) => (path, value, previousValue) => {
     case 'error':
       elements.input.classList.add('is-invalid');
       if (value.name === i18n.t('errorNames.validation')) {
-        console.log(value);
         if (value.errors.toString() === 'errors.invalidUrl') {
           invalid('validationErrors.invalidUrl', elements, i18n, state);
         }
@@ -141,26 +138,13 @@ export default (state, elements, i18n) => (path, value, previousValue) => {
       });
       break;
     }
-    case 'trackingPosts': {
-      const view = document.querySelector('.posts ul');
-      const existingPosts = state.posts.map(({ id }) => id);
-      const posts = state.trackingPosts.filter(({ id }) => !existingPosts.includes(id)).reverse();
-      renderPosts(posts, view, 'prepend', i18n, state);
+    case 'posts': {
+      const view = renderGeneralStructure('posts', i18n);
+
+      const { posts } = state;
+      renderPosts(posts, view, i18n, state);
       break;
     }
-    case 'newFeedId':
-      if (!previousValue) {
-        const view = renderGeneralStructure('posts', i18n);
-
-        const { posts } = state;
-        renderPosts(posts, view, 'append', i18n, state);
-      }
-      if (previousValue) {
-        const view = document.querySelector('.posts ul');
-        const posts = state.posts.filter(({ feedId }) => value === feedId).reverse();
-        renderPosts(posts, view, 'prepend', i18n, state);
-      }
-      break;
     default:
       break;
   }

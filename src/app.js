@@ -6,7 +6,7 @@ import render from './render';
 import ru from './locales/ru';
 import parser from './parser';
 import tracking from './tracking';
-import add from './addToState';
+import add from './add';
 import proxy from './proxy';
 
 export default () => {
@@ -25,10 +25,8 @@ export default () => {
     },
     feeds: [],
     posts: [],
-    newFeedId: '',
     error: '',
     urlsUsed: [],
-    trackingPosts: [],
     viewedPost: '',
     state: 'filling',
   };
@@ -62,18 +60,15 @@ export default () => {
     const schema = yup.object().shape({
       url: yup.string().url().nullable().notOneOf(state.urlsUsed),
     });
+
     schema
       .validate(state.fields)
-      .then(() => {
-        const modifiedUrl = proxy(url);
-        return axios.get(modifiedUrl);
-      })
+      .then(() => axios.get(proxy(url)))
       .then((response) => parser(response.data))
-      .then((channel) => add(watchedState, channel, 'new'))
-      .then((id) => {
-        watchedState.newFeedId = id;
+      .then((channel) => {
         watchedState.urlsUsed.push(url);
-        tracking(watchedState, url, i18nInstance, id);
+        add(url, watchedState, channel);
+        setTimeout(() => tracking(watchedState), 5000);
       })
       .catch((err) => {
         watchedState.error = err;

@@ -1,18 +1,25 @@
+import _ from 'lodash';
 import axios from 'axios';
 import parser from './parser';
-import add from './addToState';
 import proxy from './proxy';
 
-export default (state, url, feedId) => {
-  const modifiedUrl = proxy(url);
-
-  const iter = () => {
-    axios
-      .get(modifiedUrl)
-      .then((response) => parser(response.data))
-      .then((channel) => add(state, channel, 'existing', feedId))
-      .catch((err) => console.log(err))
-      .then(() => setTimeout(() => iter(), 5000));
-  };
-  setTimeout(() => iter(), 5000);
+const tracking = (state) => {
+  const { feeds, posts } = state;
+  const statee = state;
+  feeds.forEach(({ url, id }) => axios
+    .get(proxy(url))
+    .then((response) => parser(response.data))
+    .then((channel) => {
+      const updatedPosts = channel.posts;
+      const oldPosts = posts.filter((post) => post.feedId === id);
+      const addedPosts = _.differenceBy(updatedPosts, oldPosts, 'link');
+      if (addedPosts.length !== 0) {
+        const newPosts = addedPosts.map((post) => ({ ...post, id: _.uniqueId(), feedId: id }));
+        statee.posts = [...newPosts, ...posts];
+      }
+    })
+    .catch((err) => console.log(err)));
+  setTimeout(() => tracking(state), 5000);
 };
+
+export default tracking;
